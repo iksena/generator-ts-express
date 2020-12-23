@@ -9,6 +9,7 @@ class MicroserviceGenerator extends Generator {
       description: this.pkg.description || '',
       version: this.pkg.version || '1.0.0',
       nodeVersion: (this.pkg.engines && this.pkg.engines.node) || 14,
+      repository: false,
     };
   }
 
@@ -137,6 +138,7 @@ class MicroserviceGenerator extends Generator {
   }
 
   installing() {
+    const { postgres } = this.answers;
     const devDependencies = [
       '@types/bunyan',
       '@types/cors',
@@ -153,8 +155,18 @@ class MicroserviceGenerator extends Generator {
       'ts-node',
       'tslint',
       'typescript',
+      ...postgres && ['@types/pg'],
     ];
-    const dependencies = ['body-parser', 'bunyan', 'cors', 'dotenv', 'express', 'http-errors', 'joi'];
+    const dependencies = [
+      'body-parser',
+      'bunyan',
+      'cors',
+      'dotenv',
+      'express',
+      'http-errors',
+      'joi',
+      ...postgres && ['pg'],
+    ];
 
     this.npmInstall(devDependencies, { 'save-dev': true });
     this.npmInstall(dependencies);

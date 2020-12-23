@@ -41,6 +41,18 @@ class MicroserviceGenerator extends Generator {
     ]);
   }
 
+  default() {
+    if (this.answers.healthcheck) {
+      this.composeWith(
+        require.resolve('../route'),
+        {
+          name: 'healthcheck',
+          method: 'get',
+        },
+      );
+    }
+  }
+
   writing() {
     const templates = [
       '.dockerignore',
@@ -59,13 +71,6 @@ class MicroserviceGenerator extends Generator {
       'src/middlewares/common/notFound.ts',
       'src/middlewares/common/validateSchema.ts',
     ];
-    if (this.answers.healthcheck) {
-      templates.push(
-        'src/routes/healthcheck/index.ts',
-        'src/routes/healthcheck/get/index.ts',
-        'src/routes/healthcheck/get/handler.ts',
-      );
-    }
 
     const options = {
       ...this.defaultProps,

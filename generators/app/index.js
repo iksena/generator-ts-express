@@ -8,9 +8,7 @@ class MicroserviceGenerator extends Generator {
       name: this.pkg.name || this.appname,
       description: this.pkg.description || '',
       version: this.pkg.version || '1.0.0',
-      engines: {
-        node: this.pkg.engines.node || 14,
-      },
+      nodeVersion: (this.pkg.engines && this.pkg.engines.node) || 14,
     };
   }
 
@@ -23,9 +21,9 @@ class MicroserviceGenerator extends Generator {
         message: 'What is the name of your microservice?',
       },
       {
-        name: 'node',
+        name: 'nodeVersion',
         type: 'input',
-        default: this.defaultProps.engines.node,
+        default: this.defaultProps.nodeVersion,
         message: 'What version of node will you be using?',
       },
       {
@@ -41,6 +39,60 @@ class MicroserviceGenerator extends Generator {
         message: 'Would you like to to initialize postgres database?',
       },
     ]);
+  }
+
+  writing() {
+    const templates = [
+      '.dockerignore',
+      '.env.example',
+      '.eslintrc.yml',
+      'Dockerfile',
+      'package.json',
+      'tsconfig.json',
+      'tslint.json',
+      'config/index.ts',
+      'src/index.ts',
+      'src/routes/index.ts',
+      'src/middlewares/index.ts',
+      'src/middlewares/common/index.ts',
+      'src/middlewares/common/error.ts',
+      'src/middlewares/common/notFound.ts',
+      'src/middlewares/common/validateSchema.ts',
+    ];
+    if (this.answers.healthcheck) {
+      templates.push(
+        'src/routes/healthcheck/index.ts',
+        'src/routes/healthcheck/get/index.ts',
+        'src/routes/healthcheck/get/handler.ts',
+      );
+    }
+
+    const options = {
+      ...this.defaultProps,
+      ...this.answers,
+    };
+    templates.forEach((filePath) => {
+      this.log(filePath);
+      this.fs.copyTpl(
+        this.templatePath(filePath),
+        this.destinationPath(filePath),
+        options,
+      );
+    });
+  }
+
+  installing() {
+    const devDependencies = ['@types/bunyan', '@types/cors', '@types/express', '@types/http-errors',
+      '@typescript-eslint/eslint-plugin', '@typescript-eslint/parser', 'eslint', 'eslint-config-airbnb-base',
+      'eslint-plugin-import', 'tslint', 'typescript'];
+    const dependencies = ['body-parser', 'bunyan', 'cors', 'dotenv', 'express', 'http-errors', 'joi'];
+
+    this.npmInstall(devDependencies, { 'save-dev': true });
+    this.npmInstall(dependencies);
+  }
+
+  end() {
+    this.log('Your microservice is ready!');
   }
 }
 

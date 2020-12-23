@@ -31,56 +31,79 @@ class RouteGenerator extends Generator {
 
   async prompting() {
     if (!this.options.options) {
-      this.answers = await this.prompt([
+      const answers = await this.prompt([
         {
           name: 'name',
           type: 'input',
-          default: 'healthcheck',
+          default: this.options.name || 'healthcheck',
           message: 'What is the name of the route?',
         },
         {
           name: 'method',
           type: 'list',
           choices: ['get', 'post', 'delete', 'patch', 'put'],
-          default: 'get',
+          default: this.options.method || 'get',
           message: 'What is the method of the route?',
         },
       ]);
 
-      this.options = { ...this.options, ...this.answers };
+      this.options = { ...this.options, ...answers };
     }
   }
 
-  writing() {
+  default() {
     const { method, name } = this.options;
-    this.log(`Generating route for ${method.toUpperCase()} /${name}`);
+    const title = `${method.toUpperCase()} /${name}`;
+    const moduleName = `${method}${name.charAt(0).toUpperCase()}${name.substring(1)}`;
 
-    const options = {
+    this.options = {
       ...this.options,
-      moduleName: `${method}${name.charAt(0).toUpperCase()}${name.substring(1)}`,
+      title,
+      moduleName,
     };
+  }
+
+  _writeCode() {
+    const { method, name } = this.options;
 
     this.fs.copyTpl(
       this.templatePath('src/routes/name/index.ts'),
       this.destinationPath(`src/routes/${name}/index.ts`),
-      options,
+      this.options,
     );
 
     this.fs.copyTpl(
       this.templatePath('src/routes/name/method/index.ts'),
       this.destinationPath(`src/routes/${name}/${method}/index.ts`),
-      options,
+      this.options,
     );
 
     this.fs.copyTpl(
       this.templatePath('src/routes/name/method/handler.ts'),
       this.destinationPath(`src/routes/${name}/${method}/handler.ts`),
-      options,
+      this.options,
     );
   }
 
+  _writeTest() {
+    const { method, name } = this.options;
+
+    this.fs.copyTpl(
+      this.templatePath('test/routes/name/method/handler.test.ts'),
+      this.destinationPath(`test/routes/${name}/${method}/handler.test.ts`),
+      this.options,
+    );
+  }
+
+  writing() {
+    this.log(`Generating route for ${this.options.title}`);
+
+    this._writeCode();
+    this._writeTest();
+  }
+
   end() {
-    this.log(`Route ${this.options.method.toUpperCase()} /${this.options.name} has been generated`);
+    this.log(`Route ${this.options.title} has been generated`);
   }
 }
 

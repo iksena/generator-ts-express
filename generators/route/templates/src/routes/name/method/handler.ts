@@ -1,18 +1,16 @@
 import { Handler } from 'express';
 
 const <%= moduleName %>Handler: Handler = (req, res, next) => {
-  const {
-    logger,
-  } = req.app.locals;
+  const { logger } = res.app.locals;
 
   try {
     res.json({ message: `<%= title %> service is healthy.` });
 
-    return next();
+    next();
   } catch (error) {
     logger.error(error, `Something is wrong with <%= title %> service.`);
 
-    return next(error);
+    next(error);
   }
 };
 

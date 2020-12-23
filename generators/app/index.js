@@ -60,6 +60,7 @@ class MicroserviceGenerator extends Generator {
       '.env.example',
       '.eslintrc.yml',
       'Dockerfile',
+      'jest.config.ts',
       'package.json',
       'tsconfig.json',
       'tslint.json',
@@ -87,9 +88,23 @@ class MicroserviceGenerator extends Generator {
   }
 
   installing() {
-    const devDependencies = ['@types/bunyan', '@types/cors', '@types/express', '@types/http-errors',
-      '@typescript-eslint/eslint-plugin', '@typescript-eslint/parser', 'eslint', 'eslint-config-airbnb-base',
-      'eslint-plugin-import', 'tslint', 'typescript'];
+    const devDependencies = [
+      '@types/bunyan',
+      '@types/cors',
+      '@types/express',
+      '@types/http-errors',
+      '@types/jest',
+      '@typescript-eslint/eslint-plugin',
+      '@typescript-eslint/parser',
+      'eslint',
+      'eslint-config-airbnb-base',
+      'eslint-plugin-import',
+      'jest',
+      'ts-jest',
+      'ts-node',
+      'tslint',
+      'typescript',
+    ];
     const dependencies = ['body-parser', 'bunyan', 'cors', 'dotenv', 'express', 'http-errors', 'joi'];
 
     this.npmInstall(devDependencies, { 'save-dev': true });

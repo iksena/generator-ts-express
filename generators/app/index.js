@@ -102,6 +102,16 @@ class MicroserviceGenerator extends Generator {
         },
       );
     }
+    if (this.answers.repository) {
+      this.composeWith(
+        require.resolve('../repository'),
+        {
+          name: 'example',
+          table: 'examples',
+          options: true,
+        },
+      );
+    }
   }
 
   writing() {
@@ -155,7 +165,7 @@ class MicroserviceGenerator extends Generator {
       'ts-node',
       'tslint',
       'typescript',
-      ...postgres && ['@types/pg'],
+      ...postgres ? ['@types/pg'] : [],
     ];
     const dependencies = [
       'body-parser',
@@ -165,7 +175,7 @@ class MicroserviceGenerator extends Generator {
       'express',
       'http-errors',
       'joi',
-      ...postgres && ['pg'],
+      ...postgres ? ['pg'] : [],
     ];
 
     this.npmInstall(devDependencies, { 'save-dev': true });

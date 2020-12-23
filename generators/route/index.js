@@ -5,6 +5,7 @@ class RouteGenerator extends Generator {
     super(args, opts);
 
     this.option('method', {
+      alias: 'm',
       type: String,
       required: true,
       defaults: 'get',
@@ -12,15 +13,44 @@ class RouteGenerator extends Generator {
     });
 
     this.option('name', {
+      alias: 'n',
       type: String,
       required: true,
       defaults: 'healthcheck',
       desc: 'Route name',
     });
+
+    this.option('options', {
+      alias: 'o',
+      type: Boolean,
+      required: false,
+      defaults: false,
+      desc: 'Should generate with options',
+    });
+  }
+
+  async prompting() {
+    if (!this.options.options) {
+      this.answers = await this.prompt([
+        {
+          name: 'name',
+          type: 'input',
+          default: 'healthcheck',
+          message: 'What is the name of the route?',
+        },
+        {
+          name: 'method',
+          type: 'list',
+          choices: ['get', 'post', 'delete', 'patch', 'put'],
+          default: 'get',
+          message: 'What is the method of the route?',
+        },
+      ]);
+    }
   }
 
   writing() {
-    const { method, name } = this.options;
+    const { method, name } = { ...this.options, ...this.answers };
     this.log(`Generating route for ${method.toUpperCase()} /${name}`);
 
     const options = {
@@ -48,7 +78,7 @@ class RouteGenerator extends Generator {
   }
 
   end() {
-    this.log(`Route ${this.options.method} /${this.options.name} has been generated`);
+    this.log(`Route ${this.options.method.toUpperCase()} /${this.options.name} has been generated`);
   }
 }
 

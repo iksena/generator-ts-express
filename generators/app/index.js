@@ -48,6 +48,7 @@ class MicroserviceGenerator extends Generator {
         {
           name: 'healthcheck',
           method: 'get',
+          options: true,
         },
       );
     }
@@ -77,7 +78,6 @@ class MicroserviceGenerator extends Generator {
       ...this.answers,
     };
     templates.forEach((filePath) => {
-      this.log(filePath);
       this.fs.copyTpl(
         this.templatePath(filePath),
         this.destinationPath(filePath),

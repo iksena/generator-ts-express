@@ -13,6 +13,9 @@ class MicroserviceGenerator extends Generator {
   }
 
   async prompting() {
+    const validate = (input) => input.length > 0 || 'Please input a value';
+    const shouldPromptDb = ({ postgres }) => postgres;
+
     this.answers = await this.prompt([
       {
         name: 'name',
@@ -30,13 +33,59 @@ class MicroserviceGenerator extends Generator {
         name: 'healthcheck',
         type: 'confirm',
         default: true,
-        message: 'Would you like to to generate a health check route?',
+        message: 'Would you like to generate a health check route?',
       },
       {
         name: 'postgres',
         type: 'confirm',
         default: false,
-        message: 'Would you like to to initialize postgres database?',
+        message: 'Would you like to initialize postgres database?',
+      },
+      {
+        name: 'dbHost',
+        type: 'input',
+        when: shouldPromptDb,
+        default: '',
+        message: 'Input your database host',
+        validate,
+      },
+      {
+        name: 'dbPort',
+        type: 'input',
+        when: shouldPromptDb,
+        default: '30023',
+        message: 'Input your database port',
+        validate,
+      },
+      {
+        name: 'dbName',
+        type: 'input',
+        when: shouldPromptDb,
+        default: '',
+        message: 'Input your database name',
+        validate,
+      },
+      {
+        name: 'dbUser',
+        type: 'input',
+        when: shouldPromptDb,
+        default: '',
+        message: 'Input your database user',
+        validate,
+      },
+      {
+        name: 'dbPassword',
+        type: 'input',
+        when: shouldPromptDb,
+        default: '',
+        message: 'Input your database password',
+      },
+      {
+        name: 'repository',
+        type: 'confirm',
+        when: shouldPromptDb,
+        default: true,
+        message: 'Would you like to generate an example repository for your database?',
       },
     ]);
   }

@@ -1,9 +1,9 @@
-<% if (healthcheck) {%>
+<%_ if (healthcheck) { _%>
 import healthcheck from './healthcheck';
 
 export default [
   ...healthcheck,
 ];
-<% } else { %>
+<%_ } else { _%>
 export default [];
-<% } %>
+<%_ } _%>

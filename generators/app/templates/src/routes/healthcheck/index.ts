@@ -1,10 +1,10 @@
-<% if (healthcheck) {%>
+<%_ if (healthcheck) { _%>
 import getHealthcheck from './get';
 
 export default [
   getHealthcheck,
 ];
-<% } else { %>
+<%_ } else { _%>
 export default [];
-<% } %>
+<%_ } _%>
 

@@ -1,6 +1,6 @@
 import { Handler } from 'express';
 
-const getHealthcheckHandler: Handler = (req, res, next) => {
+const <%= moduleName %>Handler: Handler = (req, res, next) => {
   const {
     logger,
     config: { loggerOptions: { name } },
@@ -17,4 +17,4 @@ const getHealthcheckHandler: Handler = (req, res, next) => {
   }
 };
 
-export default getHealthcheckHandler;
+export default <%= moduleName %>Handler;

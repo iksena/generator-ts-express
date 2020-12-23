@@ -46,11 +46,13 @@ class RouteGenerator extends Generator {
           message: 'What is the method of the route?',
         },
       ]);
+
+      this.options = { ...this.options, ...this.answers };
     }
   }
 
   writing() {
-    const { method, name } = { ...this.options, ...this.answers };
+    const { method, name } = this.options;
     this.log(`Generating route for ${method.toUpperCase()} /${name}`);
 
     const options = {

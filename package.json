@@ -1,5 +1,5 @@
 {
-  "name": "generator-ts-node",
+  "name": "generator-ts-express",
   "version": "1.0.0",
   "description": "Generator for typescript microservice with Express",
   "main": "index.js",

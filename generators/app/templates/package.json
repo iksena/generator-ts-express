@@ -1,0 +1,19 @@
+{
+  "name": "<%= name %>",
+  "version": "<%= version %>",
+  "description": "<%= description %>",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=<%= nodeVersion %>"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/src/index.js | bunyan",
+    "dev": "npm run build && npm run start",
+    "test": "jest --coverage"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

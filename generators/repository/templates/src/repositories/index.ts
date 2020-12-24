@@ -1,2 +1,2 @@
 export { default } from './BaseRepository';
-export { default as <%= name %>Repository } from './<%= name %>Repository';
+export { default as <%= title %>Repository } from './<%= title %>Repository';

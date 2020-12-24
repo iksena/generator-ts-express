@@ -1,23 +1,23 @@
 import BaseRepository from './BaseRepository';
 
-type <%= name %> = {
+type <%= title %> = {
   id: number;
 }
 
-class <%= name %>Repository extends BaseRepository {
-  async findAll(): Promise<<%= name %>[]> {
-    this.logger.debug(`[DB - <%= table %>] Find all <%= name %>s.`);
+class <%= title %>Repository extends BaseRepository {
+  async findAll(): Promise<<%= title %>[]> {
+    this.logger.debug(`[DB - <%= table %>] Find all <%= table %>.`);
 
     try {
       const { rows } = await this.db.query('SELECT * FROM <%= table %>');
 
       return rows;
     } catch (error) {
-      this.logger.error(error, `[DB - <%= table %>] Failed to find all <%= name %>s.`);
+      this.logger.error(error, `[DB - <%= table %>] Failed to find all <%= table %>.`);
 
-      throw new Error('Failed to find all <%= name %>s.');
+      throw new Error('Failed to find all <%= table %>.');
     }
   }
 }
 
-export default <%= name %>Repository;
+export default <%= title %>Repository;

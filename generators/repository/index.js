@@ -4,92 +4,72 @@ class RepositoryGenerator extends Generator {
   constructor(args, opts) {
     super(args, opts);
 
-    this.option('name', {
-      alias: 'n',
-      type: String,
-      required: true,
-      defaults: 'example',
-      desc: 'Repository name',
-    });
-
-    this.option('table', {
-      alias: 't',
-      type: String,
-      required: true,
-      defaults: 'examples',
-      desc: 'Repository database table',
-    });
-
-    this.option('options', {
-      alias: 'o',
-      type: Boolean,
-      required: false,
-      defaults: false,
-      desc: 'Should generate with options',
+    this.config.defaults({
+      repository: {
+        name: 'example',
+        table: 'examples',
+      },
     });
   }
 
   async prompting() {
-    if (!this.options.options) {
-      const answers = await this.prompt([
-        {
-          name: 'name',
-          type: 'input',
-          default: this.options.name || 'example',
-          message: 'What is the name of the repository?',
-        },
-        {
-          name: 'table',
-          type: 'input',
-          default: this.options.table || 'examples',
-          message: 'What is the name of the table in database?',
-        },
-      ]);
-
-      this.options = { ...this.options, ...answers };
-    }
+    const { name, table } = this.config.get('repository');
+    this.answers = await this.prompt([
+      {
+        name: 'name',
+        type: 'input',
+        default: name,
+        message: 'What is the name of the repository?',
+      },
+      {
+        name: 'table',
+        type: 'input',
+        default: table,
+        message: 'What is the name of the table in database?',
+      },
+    ]);
   }
 
   default() {
-    const { name, table } = this.options;
+    const { name } = this.answers;
 
-    this.options = {
-      ...this.options,
-      name: `${name.charAt(0).toUpperCase()}${name.substring(1)}`,
-      table: table.toUpperCase(),
+    this.answers = {
+      ...this.answers,
+      title: `${name.charAt(0).toUpperCase()}${name.substring(1)}`,
     };
+    this.config.set('repository', this.answers);
   }
 
   _writeCode() {
-    const { name } = this.options;
+    const { title } = this.answers;
 
     this.fs.copyTpl(
       this.templatePath('src/repositories/index.ts'),
       this.destinationPath('src/repositories/index.ts'),
-      this.options,
+      this.answers,
     );
 
     this.fs.copyTpl(
       this.templatePath('src/repositories/BaseRepository.ts'),
       this.destinationPath('src/repositories/BaseRepository.ts'),
-      this.options,
+      this.answers,
     );
 
     this.fs.copyTpl(
       this.templatePath('src/repositories/ExampleRepository.ts'),
-      this.destinationPath(`src/repositories/${name}Repository.ts`),
-      this.options,
+      this.destinationPath(`src/repositories/${title}Repository.ts`),
+      this.answers,
     );
   }
 
   writing() {
-    this.log(`Generating repository for ${this.options.name}`);
+    this.log(`Generating repository for ${this.answers.title}`);
 
     this._writeCode();
   }
 
   end() {
-    this.log(`${this.options.name}Repository has been generated`);
+    this.log(`${this.answers.title}Repository has been generated`);
   }
 }
 

@@ -2,7 +2,7 @@ import Express, { Application } from 'express';
 import BodyParser from 'body-parser';
 import Bunyan, { LoggerOptions } from 'bunyan';
 import Cors from 'cors';
-<%_ if (postgres) { _%>
+<%_ if (hasDb) { _%>
 import { Client, ClientConfig } from 'pg';
 <%_ } _%>
 
@@ -10,20 +10,20 @@ import config from '../config';
 import middlewares from './middlewares';
 import routes from './routes';
 <%_ if (repository) { _%>
-import { ExampleRepository } from './repositories';
+import { <%= repository.title %>Repository } from './repositories';
 <%_ } _%>
 
 const {
   port,
   loggerOptions,
-<%_ if (postgres) { _%>
+<%_ if (hasDb) { _%>
   resources: { db }
 <%_ } _%>
 } = config;
 const { error: errorMiddleware, notFound } = middlewares;
 const logger = Bunyan.createLogger(loggerOptions as LoggerOptions);
 
-<%_ if (postgres) { _%>
+<%_ if (hasDb) { _%>
 const initializePostgres = async (): Promise<unknown> => {
   const database = new Client(db as ClientConfig);
 
@@ -33,7 +33,7 @@ const initializePostgres = async (): Promise<unknown> => {
 
     return {
     <%_ if (repository) { _%>
-      example: new ExampleRepository(database, logger),
+      <%= repository.name %>: new <%= repository.title %>Repository(database, logger),
     <%_ } _%>
     };
   } catch (error) {
@@ -52,7 +52,7 @@ const initializeExpress = async (): Promise<Application> => {
   app.use(BodyParser.json());
   app.locals.config = config;
   app.locals.logger = logger;
-  <%_ if (postgres) { _%>
+  <%_ if (hasDb) { _%>
   app.locals.models = await initializePostgres();
   <%_ } _%>
 

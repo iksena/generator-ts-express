@@ -9,7 +9,7 @@ export default {
     level: process.env.LOG_LEVEL || 'debug',
   },
   resources: {
-    <%_ if (postgres) { _%>
+    <%_ if (hasDb) { _%>
     db: {
       host: process.env.DATABASE_HOST,
       port: process.env.DATABASE_PORT,

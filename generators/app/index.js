@@ -1,70 +1,18 @@
 const Generator = require('yeoman-generator');
 
+const dbPrompts = require('./dbPrompts');
+
 class MicroserviceGenerator extends Generator {
   initializing() {
-    this.pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
+    const pkg = this.fs.readJSON(this.destinationPath('package.json'), {});
 
     this.defaultProps = {
-      name: this.pkg.name || this.appname,
-      description: this.pkg.description || '',
-      version: this.pkg.version || '1.0.0',
-      nodeVersion: (this.pkg.engines && this.pkg.engines.node) || 14,
+      name: pkg.name || this.appname,
+      description: pkg.description || '',
+      version: pkg.version || '1.0.0',
+      nodeVersion: (pkg.engines && pkg.engines.node) || 14,
       repository: false,
     };
-  }
-
-  static promptDb() {
-    const validate = (input) => input.length > 0 || 'Please input a value';
-    const shouldPromptDb = ({ postgres }) => postgres;
-
-    return [
-      {
-        name: 'dbHost',
-        type: 'input',
-        when: shouldPromptDb,
-        default: '',
-        message: 'Input your database host',
-        validate,
-      },
-      {
-        name: 'dbPort',
-        type: 'input',
-        when: shouldPromptDb,
-        default: '30023',
-        message: 'Input your database port',
-        validate,
-      },
-      {
-        name: 'dbName',
-        type: 'input',
-        when: shouldPromptDb,
-        default: '',
-        message: 'Input your database name',
-        validate,
-      },
-      {
-        name: 'dbUser',
-        type: 'input',
-        when: shouldPromptDb,
-        default: '',
-        message: 'Input your database user',
-        validate,
-      },
-      {
-        name: 'dbPassword',
-        type: 'input',
-        when: shouldPromptDb,
-        default: '',
-        message: 'Input your database password',
-      },
-      {
-        name: 'repository',
-        type: 'confirm',
-        when: shouldPromptDb,
-        default: true,
-        message: 'Would you like to generate an example repository for your database?',
-      },
-    ];
   }
 
   async prompting() {
@@ -88,30 +36,16 @@ class MicroserviceGenerator extends Generator {
         message: 'Would you like to generate a route?',
       },
       {
-        name: 'postgres',
+        name: 'hasDb',
         type: 'confirm',
         default: false,
         message: 'Would you like to initialize postgres database?',
       },
-      ...MicroserviceGenerator.promptDb(),
+      ...dbPrompts,
     ]);
 
-    if (this.answers.hasRoute) {
-      await this.composeWith(require.resolve('../route'));
-    }
-  }
-
-  default() {
-    if (this.answers.repository) {
-      this.composeWith(
-        require.resolve('../repository'),
-        {
-          name: 'example',
-          table: 'examples',
-          options: true,
-        },
-      );
-    }
+    if (this.answers.hasRoute) await this.composeWith(require.resolve('../route'));
+    if (this.answers.repository) await this.composeWith(require.resolve('../repository'));
   }
 
   writing() {
@@ -149,7 +83,7 @@ class MicroserviceGenerator extends Generator {
   }
 
   installing() {
-    const { postgres } = this.answers;
+    const { hasDb } = this.answers;
     const devDependencies = [
       '@types/bunyan',
       '@types/cors',
@@ -166,7 +100,7 @@ class MicroserviceGenerator extends Generator {
       'ts-node',
       'tslint',
       'typescript',
-      ...postgres ? ['@types/pg'] : [],
+      ...hasDb ? ['@types/pg'] : [],
     ];
     const dependencies = [
       'body-parser',
@@ -176,7 +110,7 @@ class MicroserviceGenerator extends Generator {
       'express',
       'http-errors',
       'joi',
-      ...postgres ? ['pg'] : [],
+      ...hasDb ? ['pg'] : [],
     ];
 
     this.npmInstall(devDependencies, { 'save-dev': true });

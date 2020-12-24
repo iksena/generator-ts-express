@@ -1,8 +1,8 @@
-<%_ if (healthcheck) { _%>
-import healthcheck from './healthcheck';
+<%_ if (hasRoute) { _%>
+import <%= route.name %> from './<%= route.name %>';
 
 export default [
-  ...healthcheck,
+  ...<%= route.name %>,
 ];
 <%_ } else { _%>
 export default [];

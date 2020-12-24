@@ -13,35 +13,11 @@ class MicroserviceGenerator extends Generator {
     };
   }
 
-  async prompting() {
+  static promptDb() {
     const validate = (input) => input.length > 0 || 'Please input a value';
     const shouldPromptDb = ({ postgres }) => postgres;
 
-    this.answers = await this.prompt([
-      {
-        name: 'name',
-        type: 'input',
-        default: this.defaultProps.name,
-        message: 'What is the name of your microservice?',
-      },
-      {
-        name: 'nodeVersion',
-        type: 'input',
-        default: this.defaultProps.nodeVersion,
-        message: 'What version of node will you be using?',
-      },
-      {
-        name: 'healthcheck',
-        type: 'confirm',
-        default: true,
-        message: 'Would you like to generate a health check route?',
-      },
-      {
-        name: 'postgres',
-        type: 'confirm',
-        default: false,
-        message: 'Would you like to initialize postgres database?',
-      },
+    return [
       {
         name: 'dbHost',
         type: 'input',
@@ -88,20 +64,44 @@ class MicroserviceGenerator extends Generator {
         default: true,
         message: 'Would you like to generate an example repository for your database?',
       },
+    ];
+  }
+
+  async prompting() {
+    this.answers = await this.prompt([
+      {
+        name: 'name',
+        type: 'input',
+        default: this.defaultProps.name,
+        message: 'What is the name of your microservice?',
+      },
+      {
+        name: 'nodeVersion',
+        type: 'input',
+        default: this.defaultProps.nodeVersion,
+        message: 'What version of node will you be using?',
+      },
+      {
+        name: 'hasRoute',
+        type: 'confirm',
+        default: true,
+        message: 'Would you like to generate a route?',
+      },
+      {
+        name: 'postgres',
+        type: 'confirm',
+        default: false,
+        message: 'Would you like to initialize postgres database?',
+      },
+      ...MicroserviceGenerator.promptDb(),
     ]);
+
+    if (this.answers.hasRoute) {
+      await this.composeWith(require.resolve('../route'));
+    }
   }
 
   default() {
-    if (this.answers.healthcheck) {
-      this.composeWith(
-        require.resolve('../route'),
-        {
-          name: 'healthcheck',
-          method: 'get',
-          options: true,
-        },
-      );
-    }
     if (this.answers.repository) {
       this.composeWith(
         require.resolve('../repository'),
@@ -136,6 +136,7 @@ class MicroserviceGenerator extends Generator {
 
     const options = {
       ...this.defaultProps,
+      ...this.config.getAll(),
       ...this.answers,
     };
     templates.forEach((filePath) => {

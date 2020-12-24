@@ -9,7 +9,7 @@ import { Client, ClientConfig } from 'pg';
 import config from '../config';
 import middlewares from './middlewares';
 import routes from './routes';
-<%_ if (repository) { _%>
+<%_ if (hasRepository) { _%>
 import { <%= repository.title %>Repository } from './repositories';
 <%_ } _%>
 
@@ -32,7 +32,7 @@ const initializePostgres = async (): Promise<unknown> => {
     logger.info(`Database ${db.database} is connected.`);
 
     return {
-    <%_ if (repository) { _%>
+    <%_ if (hasRepository) { _%>
       <%= repository.name %>: new <%= repository.title %>Repository(database, logger),
     <%_ } _%>
     };

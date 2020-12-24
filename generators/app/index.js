@@ -11,7 +11,7 @@ class MicroserviceGenerator extends Generator {
       description: pkg.description || '',
       version: pkg.version || '1.0.0',
       nodeVersion: (pkg.engines && pkg.engines.node) || 14,
-      repository: false,
+      hasRepository: false,
     };
   }
 
@@ -30,22 +30,29 @@ class MicroserviceGenerator extends Generator {
         message: 'What version of node will you be using?',
       },
       {
-        name: 'hasRoute',
-        type: 'confirm',
-        default: true,
-        message: 'Would you like to generate a route?',
-      },
-      {
         name: 'hasDb',
         type: 'confirm',
         default: false,
         message: 'Would you like to initialize postgres database?',
       },
+      {
+        name: 'hasRepository',
+        type: 'confirm',
+        when: ({ hasDb }) => hasDb,
+        default: true,
+        message: 'Would you like to generate an example repository for your database?',
+      },
+      {
+        name: 'hasRoute',
+        type: 'confirm',
+        default: true,
+        message: 'Would you like to generate a route?',
+      },
       ...dbPrompts,
     ]);
 
+    if (this.answers.hasRepository) await this.composeWith(require.resolve('../repository'));
     if (this.answers.hasRoute) await this.composeWith(require.resolve('../route'));
-    if (this.answers.repository) await this.composeWith(require.resolve('../repository'));
   }
 
   writing() {

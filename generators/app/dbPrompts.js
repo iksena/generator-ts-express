@@ -41,11 +41,4 @@ module.exports = [
     default: '',
     message: 'Input your database password',
   },
-  {
-    name: 'repository',
-    type: 'confirm',
-    when: shouldPromptDb,
-    default: true,
-    message: 'Would you like to generate an example repository for your database?',
-  },
 ];

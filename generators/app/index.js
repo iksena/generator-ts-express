@@ -40,7 +40,7 @@ class MicroserviceGenerator extends Generator {
         type: 'confirm',
         when: ({ hasDb }) => hasDb,
         default: true,
-        message: 'Would you like to generate an example repository for your database?',
+        message: 'Would you like to generate a repository for your database table?',
       },
       {
         name: 'hasRoute',

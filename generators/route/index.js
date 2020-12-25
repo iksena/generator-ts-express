@@ -13,6 +13,8 @@ class RouteGenerator extends Generator {
   }
 
   async prompting() {
+    this.log('--- Generate a route ---');
+
     const route = this.config.get('route');
     this.answers = await this.prompt([
       {

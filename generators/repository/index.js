@@ -13,6 +13,8 @@ class RepositoryGenerator extends Generator {
   }
 
   async prompting() {
+    this.log('--- Generate a repository ---');
+
     const { name, table } = this.config.get('repository');
     this.answers = await this.prompt([
       {

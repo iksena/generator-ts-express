@@ -58,7 +58,7 @@ class MicroserviceGenerator extends Generator {
   writing() {
     const templates = [
       '.dockerignore',
-      '.env.example',
+      '.env',
       '.eslintrc.yml',
       'Dockerfile',
       'jest.config.ts',
